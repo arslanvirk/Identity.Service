@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Identity.Service.Application\Identity.Service.Application.csproj" />
+    <ProjectReference Include="..\Identity.Service.Core\Identity.Service.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <!-- EF Core runtime and design-time tooling -->
+	  <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8">
+		  <TreatAsUsed>true</TreatAsUsed>
+	  </PackageReference>
+	  <!-- Latest EF8 runtime-->
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.8">
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		  <PrivateAssets>all</PrivateAssets>
+		  <TreatAsUsed>true</TreatAsUsed>
+	  </PackageReference>
+
+	  <!-- ASP.NET Core Identity integration -->
+	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.8" />
+	  <!-- PostgreSQL EF Core provider -->
+	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Remove="C:\Users\Arslan Ameen\AppData\Roaming\SonarLint for Visual Studio\.global\csharp\SonarLint.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Remove="C:\Users\Arslan Ameen\AppData\Roaming\SonarLint for Visual Studio\.global\csharp\SonarLint.xml" />
+  </ItemGroup>
+
+</Project>

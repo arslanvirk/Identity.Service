@@ -1,0 +1,360 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="StatusFail" xml:space="preserve">
+    <value>Fail</value>
+  </data>
+  <data name="StatusSuccess" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="StatusWarning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="StatusInfo" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="SomethingWentWrong" xml:space="preserve">
+    <value>Something went wrong</value>
+  </data>
+  <data name="OTPFailed" xml:space="preserve">
+    <value>There was an error in sending OTP</value>
+  </data>
+  <data name="InvalidOTP" xml:space="preserve">
+    <value>Invalid OTP</value>
+  </data>
+  <data name="OTPExpired" xml:space="preserve">
+    <value>OTP expired</value>
+  </data>
+  <data name="PermissionError" xml:space="preserve">
+    <value>You are not authorized. Please contact administrator</value>
+  </data>
+  <data name="EmailNotRegister" xml:space="preserve">
+    <value>Email is not register</value>
+  </data>
+  <data name="EmailSendSuccess" xml:space="preserve">
+    <value>Email sent successfully</value>
+  </data>
+  <data name="SentOTPSuccess" xml:space="preserve">
+    <value>OTP sent Successfully</value>
+  </data>
+  <data name="LoginSuccess" xml:space="preserve">
+    <value>login Successfully</value>
+  </data>
+  <data name="LogoutSuccess" xml:space="preserve">
+    <value>Logout Successfully</value>
+  </data>
+  <data name="InvalidDocument" xml:space="preserve">
+    <value>Invalid document</value>
+  </data>
+  <data name="InvalidEmail" xml:space="preserve">
+    <value>Invalid email address</value>
+  </data>
+  <data name="AlphanumericPassword" xml:space="preserve">
+    <value>Password must be Alphanumeric</value>
+  </data>
+  <data name="GeneratedResetPassword" xml:space="preserve">
+    <value>Generated password reset token for</value>
+  </data>
+  <data name="ChangedPassword" xml:space="preserve">
+    <value>Password changed successfully for user</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>Password successfully reset.</value>
+  </data>
+  <data name="InvalidPassword" xml:space="preserve">
+    <value>Invalid password</value>
+  </data>
+  <data name="ProvidePassword" xml:space="preserve">
+    <value>Please Provide Password to Continue</value>
+  </data>
+  <data name="OldPasswordNotCorrect" xml:space="preserve">
+    <value>Old password not correct</value>
+  </data>
+  <data name="PasswordCannotBeSame" xml:space="preserve">
+    <value>Old Password and new password cannot be same</value>
+  </data>
+  <data name="InvalidInput" xml:space="preserve">
+    <value>Invalid input</value>
+  </data>
+  <data name="InvalidToken" xml:space="preserve">
+    <value>Invalid access token</value>
+  </data>
+  <data name="InvalidUserId" xml:space="preserve">
+    <value>Invalid userId</value>
+  </data>
+  <data name="TokenExpired" xml:space="preserve">
+    <value>Token has been expired</value>
+  </data>
+  <data name="ResendEmail" xml:space="preserve">
+    <value>Please resend email</value>
+  </data>
+  <data name="LinkExpired" xml:space="preserve">
+    <value>Sorry! This Link is expired!</value>
+  </data>
+  <data name="LinkUsed" xml:space="preserve">
+    <value>Sorry! This Link is already used!</value>
+  </data>
+  <data name="InvalidCredentials" xml:space="preserve">
+    <value>Invalid credentials</value>
+  </data>
+  <data name="InactiveUser" xml:space="preserve">
+    <value>Inactive User</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>User not found</value>
+  </data>
+  <data name="RecordNotFound" xml:space="preserve">
+    <value>Record not found</value>
+  </data>
+  <data name="NotificationUpdated" xml:space="preserve">
+    <value>Notification Updated</value>
+  </data>
+  <data name="NotificationDeleted" xml:space="preserve">
+    <value>Notification Deleted</value>
+  </data>
+  <data name="StatusUpdated" xml:space="preserve">
+    <value>Status Updated</value>
+  </data>
+  <data name="InviteUserNotFound" xml:space="preserve">
+    <value>Invite user not found</value>
+  </data>
+  <data name="SendEmailFailed" xml:space="preserve">
+    <value>Failed to send email</value>
+  </data>
+  <data name="TooManyRequest" xml:space="preserve">
+    <value>Too many Request, Please try again after few minutes</value>
+  </data>
+  <data name="ForgetPasswordEmailSent" xml:space="preserve">
+    <value>forget password email sent</value>
+  </data>
+  <data name="PasswordsDoNotMatch" xml:space="preserve">
+    <value>Passwords do not match.</value>
+  </data>
+  <data name="DepartmentNotFound" xml:space="preserve">
+    <value>Department not found.</value>
+  </data>
+  <data name="DepartmentsNotFound" xml:space="preserve">
+    <value>Departments not found.</value>
+  </data>
+  <data name="IndustryNotFound" xml:space="preserve">
+    <value>Industry not found.</value>
+  </data>
+  <data name="IndustriesNotFound" xml:space="preserve">
+    <value>Industries not found.</value>
+  </data>
+  <data name="UserCreatedSuccess" xml:space="preserve">
+    <value>User Created successfully</value>
+  </data>
+  <data name="UserActiveAndEmailConfirmed" xml:space="preserve">
+    <value>User {UserId} is active and email is confirmed.</value>
+  </data>
+  <data name="FailedToSendPasswordResetEmailUserId" xml:space="preserve">
+    <value>Failed to send password reset email for user {UserId}.</value>
+  </data>
+  <data name="FailedToSendPasswordResetEmail" xml:space="preserve">
+    <value>Failed to send password reset email.</value>
+  </data>
+  <data name="UserInactiveOrEmailNotConfirmed" xml:space="preserve">
+    <value>User {UserId} is either inactive or email not confirmed.</value>
+  </data>
+  <data name="InvalidInviteUserId" xml:space="preserve">
+    <value>Invalid invite user ID: {InviteUserId}. Please resend email.</value>
+  </data>
+  <data name="PasswordResetSuccessful" xml:space="preserve">
+    <value>Password reset successful</value>
+  </data>
+  <data name="PasswordResetSuccessfulForUserId" xml:space="preserve">
+    <value>Password reset successful for user ID: {UserId}.</value>
+  </data>
+  <data name="UserAttemptedToReusePassword" xml:space="preserve">
+    <value>User:{InviteUserId} attempted to reuse the same password.</value>
+  </data>
+  <data name="UnknownValidationError" xml:space="preserve">
+    <value>An unknown error occurred.</value>
+  </data>
+  <data name="PasswordResetReq" xml:space="preserve">
+    <value>Password Reset Request</value>
+  </data>
+  <data name="ContactUsInvalidEmail" xml:space="preserve">
+    <value>Email must be a valid email address.</value>
+  </data>
+  <data name="ContactUsInvalidQuantity" xml:space="preserve">
+    <value>Quantity must be at least 1.</value>
+  </data>
+  <data name="ContactUsSaveFailed" xml:space="preserve">
+    <value>Failed to save your request. Please try again.</value>
+  </data>
+  <data name="ContactUsEmailSendFailed" xml:space="preserve">
+    <value>Failed to send contact us email {0}.</value>
+  </data>
+  <data name="DatabaseErrorContactUs" xml:space="preserve">
+    <value>A database error occurred. Please check your input and try again.</value>
+  </data>
+  <data name="UnexpectedErrorContactUs" xml:space="preserve">
+    <value>An unexpected error occurred while processing your request.</value>
+  </data>
+  <data name="UnexpectedErrorContactUsEmail" xml:space="preserve">
+    <value>Unexpected error processing ContactUs for {Email}</value>
+  </data>
+  <data name="ContactUsEmailReceived" xml:space="preserve">
+    <value>Your request has been received. Our team will contact you shortly.</value>
+  </data>
+  <data name="UserProfileUpdatedSuccessMessage" xml:space="preserve">
+    <value>Your profile has been updated successfully!</value>
+  </data>
+  <data name="DuplicateEmailaddress" xml:space="preserve">
+    <value>Email Already Exists</value>
+  </data>
+  <data name="AuthenticationCookieIsMissing" xml:space="preserve">
+    <value>Authentication cookie is missing or empty.</value>
+  </data>
+  <data name="HandleRequest" xml:space="preserve">
+    <value>Handling request: {Url}</value>
+  </data>
+  <data name="FinishedRequest" xml:space="preserve">
+    <value>Finished handling request: {Url} with status {StatusCode}</value>
+  </data>
+  <data name="HandleRequestException" xml:space="preserve">
+    <value>Exception while processing {Url}</value>
+  </data>
+  <data name="JWTSecretNotConfigured" xml:space="preserve">
+    <value>JWTSecret is not configured.</value>
+  </data>
+  <data name="ApiLogsSuccess" xml:space="preserve">
+    <value>API call Ends. </value>
+  </data>
+  <data name="ApiLogsFail" xml:space="preserve">
+    <value>API call Ends with exception.</value>
+  </data>
+  <data name="JwtSecretMissing" xml:space="preserve">
+    <value>JWT secret is missing or invalid.</value>
+  </data>
+  <data name="ServerDataBaseConnectedInTesting" xml:space="preserve">
+    <value>Server Database Connected in Testing</value>
+  </data>
+  <data name="InMemoryDataBaseNotCreated" xml:space="preserve">
+    <value>In Memory Database Not Created</value>
+  </data>
+  <data name="DuplicateUserName" xml:space="preserve">
+    <value>DuplicateUserName</value>
+  </data>
+  <data name="DuplicateEmail" xml:space="preserve">
+    <value>DuplicateEmail</value>
+  </data>
+</root>
