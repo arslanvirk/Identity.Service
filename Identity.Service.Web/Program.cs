@@ -1,7 +1,6 @@
 using Identity.Service.Application.Constants;
 using Identity.Service.Application.DTOs.Shared;
 using Identity.Service.Application.DTOs.Shared.Configurations;
-using Identity.Service.Application.Services;
 using Identity.Service.Core.Entities;
 using Identity.Service.Infrastructure.Context;
 using Identity.Service.Web.Extensions;
@@ -49,7 +48,8 @@ builder.Services.AddIdentity<User, UserRole>(opts =>
 
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
 .AddJwtBearer(options =>
@@ -63,6 +63,13 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecretManagerDto.JwtSecret))
     };
+})
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, opts =>
+{
+    opts.Cookie.Name = AuthCookiesValue.AuthKey;
+    opts.Cookie.HttpOnly = true;
+    opts.LoginPath = "/identity/api/v1/login";
+    opts.SlidingExpiration = true;
 });
 
 var app = builder.Build();
@@ -75,18 +82,23 @@ app.UseSwagger(c =>
 
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/identity/swagger/v1/swagger.json", "identity Configuration v1");
+    c.SwaggerEndpoint("/identity/swagger/v1/swagger.json", "identity v1");
     c.RoutePrefix = "identity/swagger";
 });
 
-app.UseHttpsRedirection();
 app.UseMiddleware<ErrorHandlerMiddleware>();
+app.UseHttpsRedirection();
+app.UseCors("CorsPolicy");
+
+app.UseRouting();
+
 app.UseMiddleware<RequestResponseMiddleware>();
-//app.UseMiddleware<AuthenticationMiddleware>();
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseMiddleware<AuthenticationMiddleware>();
+
 app.MapControllers();
-app.MapHealthChecks("/identity/identity/health", new HealthCheckOptions { AllowCachingResponses = false })
-   .WithMetadata(new AllowAnonymousAttribute());
+app.MapHealthChecks("/identity/identity/health", new HealthCheckOptions
+{
+    AllowCachingResponses = false
+}).WithMetadata(new AllowAnonymousAttribute());
 
 app.Run();
