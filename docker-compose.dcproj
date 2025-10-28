@@ -12,5 +12,11 @@
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="docs\architecture.md" />
+    <None Include="docs\configuration.md" />
+    <None Include="docs\database.md" />
+    <None Include="docs\operations-docker.md" />
+    <None Include="docs\overview.md" />
+    <None Include="docs\security.md" />
   </ItemGroup>
 </Project>
