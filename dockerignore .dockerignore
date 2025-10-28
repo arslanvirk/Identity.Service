@@ -1,0 +1,15 @@
+**/bin/
+**/obj/
+**/out/
+**/packages/
+**/.vs/
+**/.vscode/
+**/*.user
+**/*.rsuser
+**/*.suo
+**/*.cache
+**/*.pdb
+**/*.userprefs
+**/node_modules/
+Dockerfile*
+docker-compose*.yml

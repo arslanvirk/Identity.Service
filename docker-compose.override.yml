@@ -1,0 +1,14 @@
+# Local developer overrides (VS 2022 or CLI)
+services:
+  api:
+    # Map to a friendlier local port for browsing
+    ports:
+      - "5000:8080"
+    # Optional: live reload via bind mount (uncomment if you want dotnet watch scenario)
+    # volumes:
+    #   - ./Identity.Service.Web:/src/Identity.Service.Web
+    # command: ["dotnet", "watch", "--project", "Identity.Service.Web/Identity.Service.Web.csproj", "run", "--no-restore", "--no-build"]
+  pgadmin:
+    environment:
+      PGADMIN_CONFIG_CHECK_EMAIL_DELIVERABILITY: "False"
+      PGADMIN_CONFIG_ALLOW_SPECIAL_EMAIL_DOMAINS: '["local.test","localhost","test","example.com"]'

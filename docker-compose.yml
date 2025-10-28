@@ -1,0 +1,71 @@
+name: identity-service
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Identity.Service.Web/Dockerfile
+    image: identity.service.web:latest
+    container_name: identity-service-api
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # .NET runtime
+      ASPNETCORE_ENVIRONMENT: Development
+      EnvironmentName: dev
+      ASPNETCORE_URLS: http://+:8080
+
+      # Pass configuration via environment variables (Configuration["Jwt:Issuer"] etc.)
+      Jwt__Issuer: http://identity.local
+      Jwt__Audience: identity-clients
+
+      # Connection string for EF Core Npgsql
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=identitydb;Username=postgres;Password=postgrespw;Pooling=true
+
+    ports:
+      - "8080:8080" # host:container
+    networks:
+      - identity-net
+
+  db:
+    image: postgres:16
+    container_name: identity-service-db
+    environment:
+      POSTGRES_PASSWORD: postgrespw
+      POSTGRES_DB: identitydb
+      POSTGRES_USER: postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d identitydb"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - identity-net
+
+  pgadmin:
+    image: dpage/pgadmin4:8
+    container_name: identity-service-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com           # Option A
+      # PGADMIN_DEFAULT_EMAIL: admin@local.test          # Option B (if you prefer)
+      PGADMIN_DEFAULT_PASSWORD: admin123!
+      PGADMIN_CONFIG_CHECK_EMAIL_DELIVERABILITY: "False"
+      PGADMIN_CONFIG_ALLOW_SPECIAL_EMAIL_DOMAINS: '["local.test","localhost","test","example.com"]'
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    networks:
+      - identity-net
+
+volumes:
+  pgdata:
+
+networks:
+  identity-net:
+    driver: bridge
