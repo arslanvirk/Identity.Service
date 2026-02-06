@@ -42,34 +42,105 @@ Actions ? CI/CD Pipeline ? Run workflow
 - Docker Desktop or Docker Engine
 - Docker Compose V2
 
-### Steps
+### Choose Your Deployment Method
 
-1. **Create environment file**
-   ```bash
-   cp .env.template .env
-   # Edit .env with your values
-   ```
+#### Option 1: Using `.env` File (Recommended for Local/Dev)
 
-2. **Login to GHCR**
-   ```bash
-   echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
-   ```
+**Quick Start:**
+```bash
+# 1. Create environment file
+cp .env.template .env
 
-3. **Pull and run**
-   ```bash
-   docker compose -f docker-compose.prod.yml pull
-   docker compose -f docker-compose.prod.yml up -d
-   ```
+# 2. Edit with your values
+notepad .env  # Windows
+nano .env     # Linux/Mac
 
-4. **Verify deployment**
-   ```bash
-   docker compose -f docker-compose.prod.yml ps
-   curl http://localhost:8080/health
-   ```
+# 3. Login to GHCR
+echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
 
-5. **Access services**
-   - API: http://localhost:8080
-   - pgAdmin: http://localhost:5050
+# 4. Pull and run
+docker compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml up -d
+
+# 5. Verify deployment
+curl http://localhost:8080/health
+```
+
+**Best for:**
+- Local development
+- Quick testing
+- Individual developer environments
+
+---
+
+#### Option 2: Using Docker Secrets (Recommended for Production)
+
+**Quick Start (Windows):**
+```powershell
+# 1. Run setup script
+.\scripts\setup-secrets.ps1
+
+# 2. Login to GHCR
+echo $env:GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
+
+# 3. Pull and run
+docker compose -f docker-compose.prod.secrets.yml pull
+docker compose -f docker-compose.prod.secrets.yml up -d
+
+# 4. Verify deployment
+curl http://localhost:8080/health
+
+# 5. Verify secrets are mounted
+docker exec identity-service-api ls -la /run/secrets/
+```
+
+**Quick Start (Linux/Mac):**
+```bash
+# 1. Run setup script
+chmod +x scripts/setup-secrets.sh
+./scripts/setup-secrets.sh
+
+# 2. Login to GHCR
+echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
+
+# 3. Pull and run
+docker compose -f docker-compose.prod.secrets.yml pull
+docker compose -f docker-compose.prod.secrets.yml up -d
+
+# 4. Verify deployment
+curl http://localhost:8080/health
+
+# 5. Verify secrets are mounted
+docker exec identity-service-api ls -la /run/secrets/
+```
+
+**Best for:**
+- Production environments
+- Staging environments
+- Maximum security requirements
+
+---
+
+### Access Services
+
+After deployment (both methods):
+- **API**: http://localhost:8080
+- **API Health**: http://localhost:8080/health
+- **pgAdmin**: http://localhost:5050
+
+---
+
+### ?? Detailed Secrets Documentation
+
+For comprehensive information about secrets management:
+- **Quick Start**: See [docs/SECRETS-QUICKSTART.md](docs/SECRETS-QUICKSTART.md)
+- **Full Guide**: See [docs/SECRETS-MANAGEMENT.md](docs/SECRETS-MANAGEMENT.md)
+
+Covers:
+- Detailed setup for both methods
+- Security best practices
+- Troubleshooting
+- Migration between methods
 
 ---
 
