@@ -11,10 +11,10 @@ permissions:
   packages: write
 
 env:
-REGISTRY: ghcr.io
-IMAGE_NAME_API: identity.service
-IMAGE_NAME_DB: identity.service.db
-IMAGE_NAME_PGADMIN: identity.service.pgadmin
+  REGISTRY: ghcr.io
+  IMAGE_NAME_API: identity.service
+  IMAGE_NAME_DB: identity.service.db
+  IMAGE_NAME_PGADMIN: identity.service.pgadmin
 
 jobs:
   build-and-push:
