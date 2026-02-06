@@ -11,6 +11,16 @@ services:
     networks:
       - ci-net
 
+  db:
+    image: postgres:16
+    networks:
+      - ci-net
+
+  pgadmin:
+    image: dpage/pgadmin4:8
+    networks:
+      - ci-net
+
 networks:
   ci-net:
     driver: bridge

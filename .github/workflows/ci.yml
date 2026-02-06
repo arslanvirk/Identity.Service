@@ -11,8 +11,10 @@ permissions:
   packages: write
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: identity.service
+REGISTRY: ghcr.io
+IMAGE_NAME_API: identity.service
+IMAGE_NAME_DB: identity.service.db
+IMAGE_NAME_PGADMIN: identity.service.pgadmin
 
 jobs:
   build-and-push:
@@ -37,27 +39,56 @@ jobs:
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           echo "repo_owner=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
-      - name: Set image tags in compose file
+      - name: Set image tags
         run: |
-          export IMAGE_TAG_LATEST="${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_owner }}/${{ env.IMAGE_NAME }}:latest"
-          export IMAGE_TAG_SHA="${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_owner }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.sha_short }}"
-          echo "IMAGE_TAG_LATEST=${IMAGE_TAG_LATEST}" >> $GITHUB_ENV
-          echo "IMAGE_TAG_SHA=${IMAGE_TAG_SHA}" >> $GITHUB_ENV
+          # API image tags
+          echo "API_TAG_LATEST=${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_owner }}/${{ env.IMAGE_NAME_API }}:latest" >> $GITHUB_ENV
+          echo "API_TAG_SHA=${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_owner }}/${{ env.IMAGE_NAME_API }}:${{ steps.meta.outputs.sha_short }}" >> $GITHUB_ENV
+          
+          # Database image tags
+          echo "DB_TAG_LATEST=${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_owner }}/${{ env.IMAGE_NAME_DB }}:latest" >> $GITHUB_ENV
+          echo "DB_TAG_SHA=${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_owner }}/${{ env.IMAGE_NAME_DB }}:${{ steps.meta.outputs.sha_short }}" >> $GITHUB_ENV
+          
+          # pgAdmin image tags
+          echo "PGADMIN_TAG_LATEST=${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_owner }}/${{ env.IMAGE_NAME_PGADMIN }}:latest" >> $GITHUB_ENV
+          echo "PGADMIN_TAG_SHA=${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_owner }}/${{ env.IMAGE_NAME_PGADMIN }}:${{ steps.meta.outputs.sha_short }}" >> $GITHUB_ENV
+
+      - name: Pull base images
+        run: |
+          docker compose -f docker-compose.ci.yml pull db pgadmin
 
       - name: Build images with Docker Compose
         run: |
           docker compose -f docker-compose.ci.yml build \
             --build-arg BUILD_CONFIGURATION=Release
 
-      - name: Tag images
+      - name: Tag all images
         run: |
-          docker tag identity-service-api:ci ${{ env.IMAGE_TAG_LATEST }}
-          docker tag identity-service-api:ci ${{ env.IMAGE_TAG_SHA }}
+          # Tag API images
+          docker tag identity-service-api:ci ${{ env.API_TAG_LATEST }}
+          docker tag identity-service-api:ci ${{ env.API_TAG_SHA }}
+          
+          # Tag Database images
+          docker tag postgres:16 ${{ env.DB_TAG_LATEST }}
+          docker tag postgres:16 ${{ env.DB_TAG_SHA }}
+          
+          # Tag pgAdmin images
+          docker tag dpage/pgadmin4:8 ${{ env.PGADMIN_TAG_LATEST }}
+          docker tag dpage/pgadmin4:8 ${{ env.PGADMIN_TAG_SHA }}
 
-      - name: Push images to GHCR
+      - name: Push all images to GHCR
         run: |
-          docker push ${{ env.IMAGE_TAG_LATEST }}
-          docker push ${{ env.IMAGE_TAG_SHA }}
+          # Push API images
+          docker push ${{ env.API_TAG_LATEST }}
+          docker push ${{ env.API_TAG_SHA }}
+          
+          # Push Database images
+          docker push ${{ env.DB_TAG_LATEST }}
+          docker push ${{ env.DB_TAG_SHA }}
+          
+          # Push pgAdmin images
+          docker push ${{ env.PGADMIN_TAG_LATEST }}
+          docker push ${{ env.PGADMIN_TAG_SHA }}
 
       - name: Image summary
         run: |
@@ -65,8 +96,18 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "? Build completed successfully" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "?? **Images pushed:**" >> $GITHUB_STEP_SUMMARY
-          echo "- \`${{ env.IMAGE_TAG_LATEST }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- \`${{ env.IMAGE_TAG_SHA }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "?? **Images pushed to GHCR:**" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "?? **Registry:** [GitHub Container Registry](https://github.com/${{ github.repository }}/pkgs/container/${{ env.IMAGE_NAME }})" >> $GITHUB_STEP_SUMMARY
+          echo "#### API Service" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ env.API_TAG_LATEST }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ env.API_TAG_SHA }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "#### PostgreSQL Database" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ env.DB_TAG_LATEST }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ env.DB_TAG_SHA }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "#### pgAdmin" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ env.PGADMIN_TAG_LATEST }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ env.PGADMIN_TAG_SHA }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "?? **View Packages:** [GitHub Container Registry](https://github.com/${{ github.repository_owner }}?tab=packages)" >> $GITHUB_STEP_SUMMARY
