@@ -5,6 +5,12 @@
 
 # dotenv files
 .env
+.env.local
+.env.*.local
+
+# Docker secrets (production)
+secrets/
+*.secrets
 
 # User-specific files
 *.rsuser
