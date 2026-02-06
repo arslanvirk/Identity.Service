@@ -1,0 +1,16 @@
+name: identity-service-ci
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Identity.Service.Web/Dockerfile
+      args:
+        BUILD_CONFIGURATION: Release
+    image: identity-service-api:ci
+    networks:
+      - ci-net
+
+networks:
+  ci-net:
+    driver: bridge
