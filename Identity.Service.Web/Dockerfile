@@ -29,7 +29,8 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS base
 # Install required dependencies for health checks and debugging
 # curl - Used for health check endpoints
 # ca-certificates - Required for HTTPS connections
-RUN apk add --no-cache curl ca-certificates
+# icu-libs - Required for globalization support
+RUN apk add --no-cache curl ca-certificates icu-libs
 
 # Create non-root user for security
 # WHY? Running as root is a security risk. If container is compromised,
