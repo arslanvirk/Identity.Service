@@ -1,71 +1,184 @@
+# ============================================================================
+# IDENTITY SERVICE - DOCKER COMPOSE (LOCAL DEVELOPMENT)
+# ============================================================================
+# This file defines 3 services that work together:
+# 1. api     - Your ASP.NET Core Web API
+# 2. db      - PostgreSQL database
+# 3. pgadmin - Database management web interface
+#
+# BEGINNER'S GUIDE TO DOCKER COMPOSE:
+# - Services = Containers that work together
+# - Networks = Allow containers to talk to each other
+# - Volumes = Persistent storage (survives container restarts)
+# - depends_on = Start order (database before API)
+#
+# QUICK START:
+#   docker compose up -d     # Start all services
+#   docker compose down      # Stop all services
+#   docker compose logs -f   # View logs
+# ============================================================================
+
+# Project name (used as prefix for containers, networks, volumes)
 name: identity-service
+
 services:
+  # ==========================================================================
+  # SERVICE 1: API (Your ASP.NET Core Application)
+  # ==========================================================================
   api:
+    # Build configuration
     build:
-      context: .
+      context: .  # Build from project root
       dockerfile: Identity.Service.Web/Dockerfile
-    image: identity.service.web:latest
+      args:
+        BUILD_CONFIGURATION: Debug  # Use Debug for local development
+    
+    # Image name
+    image: identity.service.web:dev
+    
+    # Container name (what you see in 'docker ps')
     container_name: identity-service-api
+    
+    # Start database first, then API
+    # 'service_healthy' waits for database health check to pass
     depends_on:
       db:
-        condition: service_healthy
+        condition: service_healthy  # Wait for DB to be ready
+    
+    # Environment variables (passed to your .NET app)
+    # Access in C#: Configuration["Jwt__Issuer"]
     environment:
-      # .NET runtime
-      ASPNETCORE_ENVIRONMENT: Development
-      EnvironmentName: dev
-      ASPNETCORE_URLS: http://+:8080
-
-      # Pass configuration via environment variables (Configuration["Jwt:Issuer"] etc.)
+      # .NET runtime settings
+      ASPNETCORE_ENVIRONMENT: Development  # Enables detailed errors, hot reload
+      ASPNETCORE_URLS: http://+:8080      # Listen on port 8080
+      
+      # JWT configuration (for token authentication)
       Jwt__Issuer: http://identity.local
       Jwt__Audience: identity-clients
-
-      # Connection string for EF Core Npgsql
-      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=identitydb;Username=postgres;Password=postgrespw;Pooling=true
-
+      
+      # Database connection
+      # Format: Host=container_name;Port=5432;Database=name;Username=user;Password=pass
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=identitydb;Username=postgres;Password=DevPassword123;Pooling=true
+    
+    # Port mapping: host:container
+    # Access API at http://localhost:8080
     ports:
-      - "8080:8080" # host:container
+      - "8080:8080"
+    
+    # Connect to custom network (allows api ? db communication)
     networks:
       - identity-net
+    
+    # Restart policy
+    restart: unless-stopped  # Auto-restart unless manually stopped
+    
+    # Health check (Docker monitors if API is running properly)
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s      # Check every 30 seconds
+      timeout: 10s       # Wait 10s for response
+      start_period: 40s  # Give app 40s to start before checking
+      retries: 3         # Restart after 3 failed checks
 
+  # ==========================================================================
+  # SERVICE 2: DATABASE (PostgreSQL)
+  # ==========================================================================
   db:
-    image: postgres:16
+    # Use official PostgreSQL image
+    # Version 16 = latest stable release
+    # 'alpine' variant = smaller image (~80MB vs ~150MB)
+    image: postgres:16-alpine
+    
     container_name: identity-service-db
+    
+    # Database configuration
     environment:
-      POSTGRES_PASSWORD: postgrespw
-      POSTGRES_DB: identitydb
-      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: DevPassword123  # ?? Change in production!
+      POSTGRES_DB: identitydb           # Database name
+      POSTGRES_USER: postgres            # Superuser name
+      POSTGRES_INITDB_ARGS: "-E UTF8"   # Use UTF-8 encoding
+    
+    # Port mapping
+    # Access database at localhost:5432 (for DB tools like pgAdmin, DBeaver)
     ports:
       - "5432:5432"
+    
+    # Health check (ensures DB is ready before starting API)
+    # pg_isready = PostgreSQL command to check if server accepts connections
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d identitydb"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
+      interval: 10s       # Check every 10 seconds
+      timeout: 5s         # Wait 5s for response
+      retries: 10         # Try 10 times before marking unhealthy
+      start_period: 10s   # Wait 10s before first check
+    
+    # Persistent storage
+    # Stores database files so data survives container restarts
     volumes:
       - pgdata:/var/lib/postgresql/data
+    
     networks:
       - identity-net
+    
+    restart: unless-stopped
 
+  # ==========================================================================
+  # SERVICE 3: PGADMIN (Database Management Web Interface)
+  # ==========================================================================
   pgadmin:
+    # Official pgAdmin4 image
     image: dpage/pgadmin4:8
+    
     container_name: identity-service-pgadmin
+    
+    # pgAdmin login credentials
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com           # Option A
-      # PGADMIN_DEFAULT_EMAIL: admin@local.test          # Option B (if you prefer)
-      PGADMIN_DEFAULT_PASSWORD: admin123!
-      PGADMIN_CONFIG_CHECK_EMAIL_DELIVERABILITY: "False"
+      PGADMIN_DEFAULT_EMAIL: dev@local.test        # Login email
+      PGADMIN_DEFAULT_PASSWORD: admin123           # Login password
+      PGADMIN_CONFIG_CHECK_EMAIL_DELIVERABILITY: "False"  # Allow local emails
       PGADMIN_CONFIG_ALLOW_SPECIAL_EMAIL_DOMAINS: '["local.test","localhost","test","example.com"]'
+    
+    # Port mapping
+    # Access pgAdmin at http://localhost:5050
     ports:
       - "5050:80"
+    
+    # Wait for database to be healthy
     depends_on:
       - db
+    
     networks:
       - identity-net
+    
+    restart: unless-stopped
+    
+    # Optional: Persist pgAdmin settings
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
 
+# ==============================================================================
+# VOLUMES (Persistent Storage)
+# ==============================================================================
+# Data stored here survives container restarts and removals.
+# To completely remove: docker compose down -v
 volumes:
+  # PostgreSQL data files
   pgdata:
+    driver: local  # Store on local disk
+  
+  # pgAdmin configuration (servers, preferences)
+  pgadmin-data:
+    driver: local
 
+# ==============================================================================
+# NETWORKS (Container Communication)
+# ==============================================================================
+# All services on this network can communicate using service names.
+# Example: API connects to database using "db" as hostname
 networks:
   identity-net:
-    driver: bridge
+    driver: bridge  # Standard Docker network
+    # Optional: Custom subnet
+    # ipam:
+    #   config:
+    #     - subnet: 172.20.0.0/16
