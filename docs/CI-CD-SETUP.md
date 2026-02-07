@@ -47,6 +47,9 @@ ghcr.io/<owner>/identity.service.db:<git-sha>
 
 ghcr.io/<owner>/identity.service.pgadmin:latest
 ghcr.io/<owner>/identity.service.pgadmin:<git-sha>
+
+ghcr.io/<owner>/identity.service.keycloak:latest
+ghcr.io/<owner>/identity.service.keycloak:<git-sha>
 ```
 
 ---

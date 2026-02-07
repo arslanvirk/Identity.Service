@@ -11,12 +11,13 @@ permissions:
   packages: write
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME_API: identity.service
-  IMAGE_NAME_DB: identity.service.db
-  IMAGE_NAME_PGADMIN: identity.service.pgadmin
-  COMPOSE_FILE: docker-compose.yml
-  COMPOSE_PROFILE: ci
+REGISTRY: ghcr.io
+IMAGE_NAME_API: identity.service
+IMAGE_NAME_DB: identity.service.db
+IMAGE_NAME_PGADMIN: identity.service.pgadmin
+IMAGE_NAME_KEYCLOAK: identity.service.keycloak
+COMPOSE_FILE: docker-compose.yml
+COMPOSE_PROFILE: ci
 
 jobs:
   build-and-push:
@@ -45,7 +46,7 @@ jobs:
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           echo "repo_owner=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
-      # 5) Export tags for API/DB/pgAdmin images
+      # 5) Export tags for API/DB/pgAdmin/Keycloak images
       - name: Set image tags
         run: |
           echo "API_TAG_LATEST=${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_owner }}/${{ env.IMAGE_NAME_API }}:latest" >> $GITHUB_ENV
@@ -54,11 +55,13 @@ jobs:
           echo "DB_TAG_SHA=${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_owner }}/${{ env.IMAGE_NAME_DB }}:${{ steps.meta.outputs.sha_short }}" >> $GITHUB_ENV
           echo "PGADMIN_TAG_LATEST=${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_owner }}/${{ env.IMAGE_NAME_PGADMIN }}:latest" >> $GITHUB_ENV
           echo "PGADMIN_TAG_SHA=${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_owner }}/${{ env.IMAGE_NAME_PGADMIN }}:${{ steps.meta.outputs.sha_short }}" >> $GITHUB_ENV
+          echo "KEYCLOAK_TAG_LATEST=${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_owner }}/${{ env.IMAGE_NAME_KEYCLOAK }}:latest" >> $GITHUB_ENV
+          echo "KEYCLOAK_TAG_SHA=${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_owner }}/${{ env.IMAGE_NAME_KEYCLOAK }}:${{ steps.meta.outputs.sha_short }}" >> $GITHUB_ENV
 
       # 6) Pull base images used by compose
       - name: Pull base images
         run: |
-          docker compose -f ${{ env.COMPOSE_FILE }} --profile ${{ env.COMPOSE_PROFILE }} pull db-ci pgadmin-ci
+          docker compose -f ${{ env.COMPOSE_FILE }} --profile ${{ env.COMPOSE_PROFILE }} pull db-ci pgadmin-ci keycloak-ci
 
       # 7) Build API image from source
       - name: Build images with Docker Compose
@@ -74,6 +77,8 @@ jobs:
           docker tag postgres:16-alpine ${{ env.DB_TAG_SHA }}
           docker tag dpage/pgadmin4:8 ${{ env.PGADMIN_TAG_LATEST }}
           docker tag dpage/pgadmin4:8 ${{ env.PGADMIN_TAG_SHA }}
+          docker tag quay.io/keycloak/keycloak:26.5.2 ${{ env.KEYCLOAK_TAG_LATEST }}
+          docker tag quay.io/keycloak/keycloak:26.5.2 ${{ env.KEYCLOAK_TAG_SHA }}
 
       # 9) Push images to GHCR
       - name: Push all images to GHCR
@@ -84,6 +89,8 @@ jobs:
           docker push ${{ env.DB_TAG_SHA }}
           docker push ${{ env.PGADMIN_TAG_LATEST }}
           docker push ${{ env.PGADMIN_TAG_SHA }}
+          docker push ${{ env.KEYCLOAK_TAG_LATEST }}
+          docker push ${{ env.KEYCLOAK_TAG_SHA }}
 
       # 10) Publish summary in GitHub Actions UI
       - name: Image summary
@@ -105,5 +112,9 @@ jobs:
           echo "#### pgAdmin" >> $GITHUB_STEP_SUMMARY
           echo "- \`${{ env.PGADMIN_TAG_LATEST }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- \`${{ env.PGADMIN_TAG_SHA }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "#### Keycloak" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ env.KEYCLOAK_TAG_LATEST }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ env.KEYCLOAK_TAG_SHA }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "?? **View Packages:** [GitHub Container Registry](https://github.com/${{ github.repository_owner }}?tab=packages)" >> $GITHUB_STEP_SUMMARY

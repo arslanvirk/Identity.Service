@@ -7,14 +7,28 @@
     <ProjectGuid>81dded9d-158b-e303-5f62-77a2896d2a5a</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".env" />
     <None Include=".github\workflows\ci.yml" />
+    <None Include="CHANGE-SUMMARY-COMPLETE.md" />
+    <None Include="CHANGELOG-KEYCLOAK.md" />
     <None Include="DEPLOYMENT.md" />
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="docs\ARCHITECTURE-DIAGRAM.md" />
     <None Include="docs\CI-CD-SETUP.md" />
+    <None Include="docs\KEYCLOAK-CHECKLIST.md" />
+    <None Include="docs\KEYCLOAK-INTEGRATION-SUMMARY.md" />
+    <None Include="docs\KEYCLOAK-SETUP.md" />
     <None Include="docs\PROJECT-GUIDE.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="scripts\" />
+    <None Include="docs\QUICK-REFERENCE.md" />
+    <None Include="docs\README.md" />
+    <None Include="HELPER-FILES-INDEX.md" />
+    <None Include="scripts\init-keycloak-db.sql" />
+    <None Include="SESSION-SUMMARY.md" />
+    <None Include="SIMPLIFY-KEYCLOAK.md" />
+    <None Include="start.ps1" />
+    <None Include="start.sh" />
+    <None Include="UPDATE-INSTRUCTIONS.md" />
+    <None Include="update-keycloak-config.ps1" />
   </ItemGroup>
 </Project>

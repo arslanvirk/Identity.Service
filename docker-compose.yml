@@ -52,6 +52,20 @@ x-pgadmin-common: &pgadmin-common
   volumes:
     - pgadmin-data:/var/lib/pgadmin
 
+# Common Keycloak settings reused by dev services
+x-keycloak-common: &keycloak-common
+  ports:
+    - "8180:8080"
+  networks:
+    - identity-net
+  restart: unless-stopped
+  healthcheck:
+    test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
+    interval: 30s
+    timeout: 10s
+    retries: 5
+    start_period: 60s
+
 services:
   # --------------------------------------------------------------------------
   # DEV PROFILE (local build)
@@ -101,6 +115,16 @@ services:
       PGADMIN_CONFIG_ALLOW_SPECIAL_EMAIL_DOMAINS: '["local.test","localhost","test","example.com"]'
     <<: *pgadmin-common
 
+  keycloak:
+    profiles: ["dev"]
+    image: quay.io/keycloak/keycloak:26.5.2
+    container_name: identity-service-keycloak
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+    command: start-dev
+    <<: *keycloak-common
+
   # --------------------------------------------------------------------------
   # CI PROFILE (build only)
   # --------------------------------------------------------------------------
@@ -124,6 +148,12 @@ services:
   pgadmin-ci:
     profiles: ["ci"]
     image: dpage/pgadmin4:8
+    networks:
+      - identity-net
+
+  keycloak-ci:
+    profiles: ["ci"]
+    image: quay.io/keycloak/keycloak:26.5.2
     networks:
       - identity-net
 
