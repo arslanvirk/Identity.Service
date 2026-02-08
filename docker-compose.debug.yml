@@ -1,0 +1,35 @@
+# ============================================================================
+# DOCKER COMPOSE - DEBUG CONFIGURATION
+# ============================================================================
+# This extends docker-compose.yml to override the API service for debugging
+# 
+# Usage:
+#   $env:COMPOSE_PROFILES="dev"; docker compose -f docker-compose.yml -f docker-compose.debug.yml up -d --build
+#
+# This overrides the 'api' service from docker-compose.yml with debug settings
+# ============================================================================
+
+services:
+  # Override the api service from docker-compose.yml with debug settings
+  api:
+    profiles: ["dev"]  # Use dev profile to work with existing services
+    build:
+      context: .
+      dockerfile: Identity.Service.Web/Dockerfile.debug
+      args:
+        BUILD_CONFIGURATION: Debug
+    image: identity.service.web:debug
+    container_name: identity-service-api-debug
+    environment:
+      # Enable detailed debug logging
+      Logging__LogLevel__Default: Debug
+      Logging__LogLevel__Microsoft: Information
+      Logging__LogLevel__Microsoft.AspNetCore: Warning
+      Logging__LogLevel__Microsoft.EntityFrameworkCore: Information
+      
+      # Debug settings
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+      ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS: "false"
+    volumes:
+      # Mount logs directory for easier access
+      - ./logs:/app/logs

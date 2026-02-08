@@ -12,7 +12,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -29,7 +32,58 @@ builder.Services.AddControllers(options =>
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+var keycloakAuthority = builder.Configuration["Keycloak:Authority"]!;
+var keycloakClientId = builder.Configuration["Keycloak:ClientId"]!;
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Identity Service API",
+        Version = "v1",
+        Description = "Identity Service API with Keycloak Authentication"
+    });
+
+    // OAuth2 definition for Keycloak
+    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.OAuth2,
+        Flows = new OpenApiOAuthFlows
+        {
+            AuthorizationCode = new OpenApiOAuthFlow
+            {
+                AuthorizationUrl = new Uri($"{keycloakAuthority}/protocol/openid-connect/auth"),
+                TokenUrl = new Uri($"{keycloakAuthority}/protocol/openid-connect/token"),
+                Scopes = new Dictionary<string, string>
+                {
+                    { "openid", "OpenID Connect" },
+                    { "profile", "User profile" },
+                    { "email", "Email address" }
+                }
+            }
+        },
+        Description = "Keycloak OAuth2 Authorization Code Flow"
+    });
+
+    // Global security requirement
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id   = "oauth2"
+                }
+            },
+            new[] { "openid", "profile", "email" }
+        }
+    });
+});
+
 builder.Services.AddHealthChecks();
 
 builder.Services.AddDbContext<EFDataContext>(opts =>
@@ -54,14 +108,37 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    var keycloakMetadataAddress = builder.Environment.IsDevelopment()
+        ? builder.Configuration["Keycloak:MetadataAddress"]! // Use localhost for browser
+        : builder.Configuration["Keycloak:MetadataAddress"]!.Replace("localhost", "keycloak"); // Use service name in Docker
+    
+    options.MetadataAddress = keycloakMetadataAddress;
+    options.Audience = builder.Configuration["Keycloak:Audience"];
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
+        ValidIssuer = builder.Configuration["Keycloak:Issuer"],
+        ValidateAudience = true,
         ValidateIssuer = true,
-        ValidateAudience = false,
         ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecretManagerDto.JwtSecret))
+        ClockSkew = TimeSpan.FromMinutes(5)
+    };
+
+    // Required for HTTP in development (Keycloak uses HTTP by default in dev mode)
+    options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
+    
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            Console.WriteLine($"Authentication failed: {context.Exception.Message}");
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = context =>
+        {
+            Console.WriteLine("Token validated successfully");
+            return Task.CompletedTask;
+        }
     };
 })
 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, opts =>
@@ -78,19 +155,17 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<EFDataContext>();
-    await db.Database.MigrateAsync();
+   // await db.Database.MigrateAsync();
 }
 
 // Configure the HTTP request pipeline.
-app.UseSwagger(c =>
+app.UseSwagger();
+app.UseSwaggerUI(options =>
 {
-    c.RouteTemplate = "identity/swagger/{documentName}/swagger.json";
-});
-
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/identity/swagger/v1/swagger.json", "identity v1");
-    c.RoutePrefix = "identity/swagger";
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Identity Service API v1");
+    options.OAuthClientId(keycloakClientId);
+    options.OAuthUsePkce(); // Use PKCE for security
+    options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
 });
 
 app.UseMiddleware<ErrorHandlerMiddleware>();
@@ -108,4 +183,4 @@ app.MapHealthChecks("/identity/identity/health", new HealthCheckOptions
     AllowCachingResponses = false
 }).WithMetadata(new AllowAnonymousAttribute());
 
-app.Run();
+await app.RunAsync();

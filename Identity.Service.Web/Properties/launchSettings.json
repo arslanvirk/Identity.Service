@@ -1,38 +1,78 @@
 {
   "profiles": {
-    "http": {
+    "Identity.Service (HTTP)": {
       "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:8080",
+        "Logging__LogLevel__Default": "Debug",
+        "Logging__LogLevel__Microsoft": "Information",
+        "Logging__LogLevel__Microsoft.AspNetCore": "Warning",
+        "ConnectionStrings__DefaultConnection": "Host=localhost;Port=5432;Database=identitydb;Username=postgres;Password=DevPassword123;Pooling=true",
+        "Jwt__Issuer": "http://identity.local",
+        "Jwt__Audience": "identity-clients",
+        "Jwt__SigningKey": "dev-signing-key-change-me",
+        "Keycloak__Authority": "http://localhost:8180/realms/keycloak-demo",
+        "Keycloak__ClientId": "demo-api",
+        "Keycloak__Audience": "account",
+        "Keycloak__Issuer": "http://localhost:8180/realms/keycloak-demo",
+        "Keycloak__MetadataAddress": "http://localhost:8180/realms/keycloak-demo/.well-known/openid-configuration"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:5094"
+      "applicationUrl": "http://localhost:8080"
     },
-    "https": {
+    "Identity.Service (HTTPS)": {
       "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "https://localhost:7265;http://localhost:8080",
+        "Logging__LogLevel__Default": "Debug",
+        "Logging__LogLevel__Microsoft": "Information",
+        "Logging__LogLevel__Microsoft.AspNetCore": "Warning",
+        "ConnectionStrings__DefaultConnection": "Host=localhost;Port=5432;Database=identitydb;Username=postgres;Password=DevPassword123;Pooling=true",
+        "Jwt__Issuer": "http://identity.local",
+        "Jwt__Audience": "identity-clients",
+        "Jwt__SigningKey": "dev-signing-key-change-me",
+        "Keycloak__Authority": "http://localhost:8180/realms/keycloak-demo",
+        "Keycloak__ClientId": "demo-api",
+        "Keycloak__Audience": "account",
+        "Keycloak__Issuer": "http://localhost:8180/realms/keycloak-demo",
+        "Keycloak__MetadataAddress": "http://localhost:8180/realms/keycloak-demo/.well-known/openid-configuration"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:7265;http://localhost:5094"
+      "applicationUrl": "https://localhost:7265;http://localhost:8080"
+    },
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "launchBrowser": true,
+      "launchUrl": "http://localhost:8080/swagger",
+      "environmentVariables": {
+        "COMPOSE_PROFILES": "dev"
+      },
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "api",
+      "composeLaunchUrl": "http://localhost:8080/swagger",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "api": "StartDebugging",
+        "db": "StartWithoutDebugging",
+        "keycloak": "StartWithoutDebugging",
+        "pgadmin": "StartWithoutDebugging"
+      }
     },
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
+      "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ConnectionStrings__DefaultConnection": "Host=localhost;Port=5432;Database=identitydb;Username=postgres;Password=DevPassword123;Pooling=true",
+        "Keycloak__MetadataAddress": "http://localhost:8180/realms/keycloak-demo/.well-known/openid-configuration"
       }
-    },
-    "Container (Dockerfile)": {
-      "commandName": "Docker",
-      "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
-      "environmentVariables": {
-        "ASPNETCORE_HTTPS_PORTS": "8081",
-        "ASPNETCORE_HTTP_PORTS": "8080"
-      },
-      "publishAllPorts": true,
-      "useSSL": true
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json",
@@ -40,7 +80,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:54802/",
+      "applicationUrl": "http://localhost:8080",
       "sslPort": 44377
     }
   }
